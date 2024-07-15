@@ -2,6 +2,8 @@ const {
   S3Client,
   GetObjectCommand,
   PutObjectCommand,
+  ListObjectsV2Command,
+  DeleteObjectCommand,
 } = require("@aws-sdk/client-s3");
 const { getSignedUrl } = require("@aws-sdk/s3-request-presigner");
 
@@ -37,15 +39,27 @@ async function putObjectURL(fileName, contentType) {
   return url;
 }
 
+// List all objects in the bucket
+async function listObjects() {
+  const command = new ListObjectsV2Command({
+    Bucket: "siddhantdev-private",
+    Key: "/",
+  });
+  const result = await s3Client.send(command);
+  console.log(result);
+}
+
+const deleteObject = async (key) => {
+  const command = new DeleteObjectCommand({
+    Bucket: "siddhantdev-private",
+    Key: key,
+  });
+  await s3Client.send(command);
+};
+
 async function init() {
-  //   console.log(
-  //     "URL for dragon-neon.jpg ",
-  //     await getObjectURL("uploads/user-uploads/video-1721033665802")
-  //   );
-  console.log(
-    "URL for uplaoad ",
-    await putObjectURL(`video-${Date.now()}`, "video/mp4")
-  );
+  //   listObjects();
+  deleteObject("dragon-neon.jpg");
 }
 
 init();
